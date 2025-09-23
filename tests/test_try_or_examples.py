@@ -57,12 +57,16 @@ def test_baseexception_like_is_not_caught_by_default():
         try_or(raise_custom, default=0)  # デフォルトの exc=(Exception,) では捕捉されない
 
 
+def test_returns_default_when_empty_suppliers():
+    assert try_or(default=0) == 0
+
+
 def test_examples_in_readme_are_correct():
     # Fall back to default on Exception
     assert try_or(lambda: int("123"), default=0) == 123
     assert try_or(lambda: int("not-an-int"), default=0) == 0
 
-    # Replace None to default（README 修正後を反映: import os 追加、余分な . を削除）
+    # Replace None to default
     assert try_or(lambda: os.environ.get("not-exist"), default="1") == "1"
 
     # Narrow which exceptions are caught
@@ -72,3 +76,6 @@ def test_examples_in_readme_are_correct():
         try_or(lambda: (1 + "a"), default=0, exc=(ValueError,))
 
     assert try_or(lambda: (1 + "a"), default=0, exc=(ValueError, TypeError)) == 0
+
+    # Empty suppliers
+    assert try_or(default="fallback") == "fallback"

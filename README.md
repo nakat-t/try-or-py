@@ -1,15 +1,24 @@
 # try-or
 
-A Python micro-library that returns try value or default.
+A Python micro-library that returns the first successful value (non-None) or a default.
 
-## Example
+## What it does
+
+- Evaluate one or more supplier functions left-to-right.
+- Return the first value that:
+  - does not raise a listed exception (exc), and
+  - is not None.
+- If all suppliers either raise a listed exception or return None, return the default value.
+- Exceptions not listed in exc are propagated.
+
+## Examples
 
 Fall back to default on `Exception`:
 
 ```python
 from try_or import try_or
 
-# Return the computed value when no exception is raised
+# Return the successful value when no exception is raised
 try_or(lambda: int("123"), default=0)
 # -> 123
 
@@ -18,11 +27,11 @@ try_or(lambda: int("not-an-int"), default=0)
 # -> 0
 ```
 
-Replace `None` to default:
+Replace `None` with default:
 
 ```python
-from try_or import try_or
 import os
+from try_or import try_or
 
 # Return the default when the result is None
 try_or(lambda: os.environ.get("not-exist"), default="1")
@@ -43,27 +52,58 @@ try_or(lambda: (1 + "a"), default=0, exc=(ValueError,))
 # -> raises TypeError
 
 # Fall back on ValueError or TypeError
-try_or(lambda: (1 + "a"), default=0, exc=(ValueError,TypeError))
+try_or(lambda: (1 + "a"), default=0, exc=(ValueError, TypeError))
 # -> 0
 ```
 
-## Signature
+Multiple suppliers (short-circuiting, lazy evaluation):
 
-This is literally the entire code.
+```python
+import json
+import os
+from pathlib import Path
+from try_or import try_or
+
+config = try_or(
+    # 1) Prefer env JSON
+    lambda: json.loads(os.environ["APP_CONFIG_JSON"]),
+    # 2) Then user config
+    lambda: json.loads(Path("~/.myapp/config.json").expanduser().read_text(encoding="utf-8")),
+    # 3) Then system config
+    lambda: json.loads(Path("/etc/myapp/config.json").read_text(encoding="utf-8")),
+    # Default if all above fail or return None
+    default={"host": "localhost", "port": 8080},
+)
+# -> First successful non-None is returned. Later suppliers are not evaluated.
+```
+
+Empty suppliers:
+
+```python
+from try_or import try_or
+
+try_or(default="fallback")
+# -> "fallback"
+```
+
+## The code itself
 
 ```python
 def try_or(
-    f: Callable[[], T | None],
+    *args: Callable[[], T | None],
     default: T,
     exc: type[BaseException] | tuple[type[BaseException], ...]=(Exception,)
 ) -> T:
-    try:
-        value = f()
-    except exc:
-        value = None
-    return value if value is not None else default
+    for f in args:
+        try:
+            value = f()
+            if value is not None:
+                return value
+        except exc:
+            pass
+    return default
 ```
 
 ## License
 
-MIT License
+[MIT License](./LICENSE)
