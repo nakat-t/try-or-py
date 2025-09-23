@@ -19,7 +19,7 @@ def test_short_circuit_on_first_success():
     result = try_or(f1, f2, default=0)
     assert result == 123
     assert calls["f1"] == 1
-    assert calls["f2"] == 0  # 後続は未評価
+    assert calls["f2"] == 0  # subsequent suppliers are not evaluated
 
 
 def test_second_used_after_allowed_exception():
@@ -94,7 +94,7 @@ def test_empty_suppliers_returns_default():
 
 def test_exc_subclass_caught_in_any_stage():
     def f1():
-        # KeyError は LookupError のサブクラス
+        # KeyError is a subclass of LookupError
         raise KeyError("missing")
 
     def f2():

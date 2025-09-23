@@ -11,7 +11,7 @@ EXC_CLASSES = (ValueError, TypeError, KeyError, OSError, RuntimeError)
 
 
 def values_strategy() -> st.SearchStrategy:
-    """None を含まない多様な値の戦略（可変/不変を混在）。"""
+    """Strategy for diverse values excluding None (mix of mutable/immutable)."""
     return st.one_of(
         st.integers(),
         st.text(max_size=20),
@@ -25,7 +25,7 @@ def values_strategy() -> st.SearchStrategy:
 
 
 def allowed_exc_strategy() -> st.SearchStrategy:
-    """try_or の exc 引数用（例外クラス or 例外クラスのタプル）。"""
+    """For try_or's exc argument (exception class or tuple of exception classes)."""
     single = st.sampled_from((Exception,) + EXC_CLASSES)
     tuples = st.lists(single, min_size=1, max_size=3, unique=True).map(tuple)
     return st.one_of(single, tuples)

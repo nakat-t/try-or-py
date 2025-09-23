@@ -54,7 +54,7 @@ def test_baseexception_like_is_not_caught_by_default():
         raise _TestBaseException("boom")
 
     with pytest.raises(_TestBaseException):
-        try_or(raise_custom, default=0)  # デフォルトの exc=(Exception,) では捕捉されない
+        try_or(raise_custom, default=0)  # not caught by the default exc=(Exception,)
 
 
 def test_returns_default_when_empty_suppliers():
