@@ -9,7 +9,7 @@ T = TypeVar("T")
 def try_or(
     *args: Callable[[], T | None],
     default: T,
-    exc: type[BaseException] | tuple[type[BaseException], ...]=(Exception,)
+    exc: type[BaseException] | tuple[type[BaseException], ...] = (Exception,)
 ) -> T:
     for f in args:
         try:

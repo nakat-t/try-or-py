@@ -6,7 +6,7 @@ from hypothesis import given, strategies as st
 from try_or import try_or
 
 
-# 生成に使う例外クラス集合（相互に無関係な代表例）
+# Set of exception classes used for generation (mutually unrelated representative examples)
 EXC_CLASSES = (ValueError, TypeError, KeyError, OSError, RuntimeError)
 
 
@@ -33,21 +33,21 @@ def allowed_exc_strategy() -> st.SearchStrategy:
 
 @given(value=values_strategy(), default=values_strategy(), exc=allowed_exc_strategy())
 def test_passthrough_non_none_values_property(value, default, exc):
-    # f が非 None を返すなら、default と exc に関係なく常にその値（同一オブジェクト）が返る
+    # If f returns a non-None value, that value (the same object) is always returned regardless of default and exc
     result = try_or(lambda: value, default=default, exc=exc)
     assert result is value
 
 
 @given(default=values_strategy(), exc=allowed_exc_strategy())
 def test_none_is_replaced_by_default_property(default, exc):
-    # f が None を返すなら、常に default が（同一オブジェクトとして）返る
+    # If f returns None, default is always returned (as the identical object)
     result = try_or(lambda: None, default=default, exc=exc)
     assert result is default
 
 
 @given(exc_cls=st.sampled_from(EXC_CLASSES), default=values_strategy())
 def test_listed_exceptions_fallback_property(exc_cls, default):
-    # exc に含めた例外が発生した場合は default でフォールバック
+    # If an exception listed in exc occurs, fallback to default
     def raise_exc():
         raise exc_cls("boom")
 
@@ -62,7 +62,7 @@ def test_listed_exceptions_fallback_property(exc_cls, default):
     default=values_strategy(),
 )
 def test_unlisted_exceptions_propagate_property(exc_pair, default):
-    # exc に含まれない例外は必ず伝播
+    # Exceptions not included in exc are always propagated
     exc_cls, listed_cls = exc_pair
 
     def raise_exc():

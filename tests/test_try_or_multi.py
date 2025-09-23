@@ -70,7 +70,7 @@ def test_unlisted_exception_propagates_even_with_later_suppliers():
     with pytest.raises(TypeError):
         try_or(f1, f2, default="d", exc=(ValueError,))
 
-    # f2 は呼ばれない（f1 が未捕捉例外で即伝播）
+    # f2 is not called (f1 propagates immediately due to an uncaught exception)
     assert calls["f1"] == 1
     assert calls["f2"] == 0
 
@@ -85,7 +85,7 @@ def test_all_fail_returns_default_identity():
         return None
 
     result = try_or(f1, f2, default=default_obj, exc=(ValueError,))
-    assert result is default_obj  # default の同一性保持
+    assert result is default_obj  # default identity is preserved
 
 
 def test_empty_suppliers_returns_default():
@@ -114,4 +114,4 @@ def test_identity_preserved_for_first_success_in_multi():
         raise AssertionError("should not be called")
 
     result = try_or(f1, f2, default=["different"])
-    assert result is obj  # 同一性保持
+    assert result is obj  # identity preserved

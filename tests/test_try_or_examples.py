@@ -7,7 +7,7 @@ from try_or import try_or
 
 
 class _TestBaseException(BaseException):
-    """BaseException 直系で、デフォルトの exc=(Exception,) では捕捉されないことを検証するためのテスト用例外。"""
+    """Test exception directly derived from BaseException, used to verify that exceptions not covered by the default exc=(Exception,) are not caught."""
     pass
 
 
@@ -35,17 +35,17 @@ def test_returns_default_when_value_is_none():
 def test_identity_preserved_for_mutable_value():
     obj = []
     result = try_or(lambda: obj, default=["different"])
-    assert result is obj  # 同一性保持
+    assert result is obj  # identity preserved
 
 
 def test_identity_default_returned_when_value_is_none():
     default_obj = {}
     result = try_or(lambda: None, default=default_obj)
-    assert result is default_obj  # default の同一性保持
+    assert result is default_obj  # default identity is preserved
 
 
 def test_catches_exception_subclass_in_tuple():
-    # LookupError は KeyError の基底なので捕捉される
+    # LookupError is the base class of KeyError, so it will be caught
     assert try_or(lambda: {}["missing"], default="d", exc=(LookupError,)) == "d"
 
 
