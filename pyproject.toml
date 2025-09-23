@@ -1,0 +1,21 @@
+[project]
+name = "try-or"
+version = "1.0.0"
+description = "A Python micro-library that returns try value or default. "
+readme = "README.md"
+authors = [
+    { name = "nakat-t", email = "armaiti.wizard@gmail.com" }
+]
+requires-python = ">=3.10"
+dependencies = []
+
+[dependency-groups]
+dev = [
+    "hypothesis>=6.140.2",
+    "pytest>=8.4.2",
+    "pytest-cov>=7.0.0",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
