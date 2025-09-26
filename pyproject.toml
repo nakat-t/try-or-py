@@ -26,8 +26,10 @@ Issues = "https://github.com/nakat-t/try-or-py/issues"
 [dependency-groups]
 dev = [
     "hypothesis>=6.140.2",
+    "mypy>=1.18.2",
     "pytest>=8.4.2",
     "pytest-cov>=7.0.0",
+    "ruff>=0.13.2",
 ]
 
 [build-system]
