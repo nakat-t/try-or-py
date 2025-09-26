@@ -1,6 +1,6 @@
 [project]
 name = "try-or"
-version = "1.0.0"
+version = "1.0.1rc1"
 description = "A Python micro-library that returns try value or default."
 readme = "README.md"
 keywords = ["try", "or", "except", "default"]
